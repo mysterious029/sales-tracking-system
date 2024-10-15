@@ -6,6 +6,16 @@ const auth = require('../middlewares/auth');
 const role = require('../middlewares/role');
 
 
+router.get('/employees', auth, role(['admin']), async (req, res) => {
+    try {
+        const employees = await User.find({ role: 'employee' }, 'name email role');
+        res.json(employees);
+    } catch (error) {
+        res.status(500).send('Error fetching employees');
+    }
+});
+
+
 router.get('/view-sales', auth, role(['admin']), async (req, res) => {
     try {
         const sales = await Sale.find().populate('employeeId', 'name email');
