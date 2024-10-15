@@ -20,21 +20,20 @@ exports.register = async (req, res) => {
     }
 };
 
-// Login
+
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
-    // Check if user exists
+    
     const user = await User.findOne({ email });
     if (!user) return res.status(400).send('Email not found');
 
 
-    // Check if password is correct
-    // const validPass = await bcrypt.compare(password, user.password);
+    
     const validPass = await user.comparePassword(password);
     if (!validPass) return res.status(400).send('Invalid password');
 
-    // Create and assign a token
+   
     const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET);
     res.header('Authorization', token).send({ token, role: user.role });
 };
